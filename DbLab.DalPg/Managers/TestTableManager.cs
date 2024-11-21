@@ -11,7 +11,8 @@ namespace DbLab.DalPg.Managers
             return ExecuteCursorFunction("public.test_table_read_all", reader => new TestTableEntity
             {
                 Id = reader.GetFieldValue<long?>("id"),
-                Data = reader.GetFieldValue<string>("data")
+                Data = reader.GetFieldValue<string>("data"),
+                Type = reader.GetFieldValue<int?>("type")
             }).Result;
         }
 
@@ -21,8 +22,8 @@ namespace DbLab.DalPg.Managers
             {
                 Id = reader.GetFieldValue<long?>("id"),
                 Data = reader.GetFieldValue<string>("data"),
-                Type = type
-            }, BaseTimeout, ("asd", type, NpgsqlDbType.Integer)).Result;
+                Type = reader.GetFieldValue<int?>("type")
+            }, ("vp_type", type, NpgsqlDbType.Integer)).Result;
         }
     }
 }

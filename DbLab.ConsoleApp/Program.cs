@@ -7,7 +7,7 @@ namespace DbLab.ConsoleApp
         static void Main(string[] args)
         {
             var manager = new TestTableManager();
-            var data = manager.ReadByType(1);
+            var data = manager.ReadAll();
             return;
         }
     }
