@@ -1,5 +1,6 @@
 ﻿using DbLab.DalPg.Entities;
 using DbLab.DalPgBase;
+using NpgsqlTypes;
 
 namespace DbLab.DalPg.Managers
 {
@@ -11,7 +12,17 @@ namespace DbLab.DalPg.Managers
             {
                 Id = reader.GetFieldValue<long?>("id"),
                 Data = reader.GetFieldValue<string>("data")
-            });
+            }).Result;
+        }
+
+        public List<TestTableEntity> ReadByType(int type)
+        {
+            return ExecuteCursorFunction("public.test_table_read_by_type", reader => new TestTableEntity
+            {
+                Id = reader.GetFieldValue<long?>("id"),
+                Data = reader.GetFieldValue<string>("data"),
+                Type = type
+            }, BaseTimeout, ("asd", type, NpgsqlDbType.Integer)).Result;
         }
     }
 }

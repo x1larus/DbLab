@@ -1,44 +1,62 @@
 ﻿using Npgsql;
 using NpgsqlTypes;
 using System.Data;
+using System.Text;
 
 namespace DbLab.DalPgBase
 {
     public abstract class PostgresManager
     {
-        private const string CursorName = "ref";
+        protected const string CursorName = "ref";
         protected const int BaseTimeout = 30;
 
-        protected List<T> ExecuteCursorFunction<T>(string funcName, Func<NpgsqlDataReader, T> mapper,
-            int commandTimeout = BaseTimeout, params (string name, object value, NpgsqlDbType type)[] parameters)
+        protected async Task<List<T>> ExecuteCursorFunction<T>(string funcName, Func<NpgsqlDataReader, T> mapper,
+            int commandTimeout = BaseTimeout, params (string Name, object Value, NpgsqlDbType Type)[] parameters)
         {
-            var query = $"select {funcName}($1)";
-            var list = new List<T>();
+            var query = new StringBuilder($"select {funcName}(");
+            var inParamsList = new List<NpgsqlParameter>();
+
+            foreach (var inParam in parameters)
+            {
+                query.Append($"@{inParam.Name}, ");
+                inParamsList.Add(new NpgsqlParameter
+                    { ParameterName = inParam.Name, Value = inParam.Value, NpgsqlDbType = inParam.Type });
+            }
+
             var cursorValue = Guid.NewGuid().ToString("N");
-            using var connection = BaseBuilder.GetConnection();
+            query.Append($"@{CursorName})");
+            inParamsList.Add(new NpgsqlParameter
+                { ParameterName = CursorName, Value = cursorValue, NpgsqlDbType = NpgsqlDbType.Refcursor });
+
+
+            var list = new List<T>();
+            await using var connection = BaseBuilder.GetConnection();
             connection.Open();
 
-            using var transaction = connection.BeginTransaction(IsolationLevel.ReadCommitted);
-            using (var cmd = new NpgsqlCommand(query, connection, transaction) { Parameters = { new NpgsqlParameter { Value = cursorValue, NpgsqlDbType = NpgsqlDbType.Refcursor} } })
+            await using var transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted);
+            await using (var cmd = new NpgsqlCommand(query.ToString(), connection, transaction))
             {
+                cmd.Parameters.AddRange(inParamsList.ToArray());
                 var reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
                     cursorValue = reader.GetValue(0).ToString();
                 }
-                reader.Close();
+                await reader.CloseAsync();
+            }
 
-                cmd.CommandText = $"fetch all in {cursorValue}";
-                reader = cmd.ExecuteReader();
+            await using (var cmd = new NpgsqlCommand($"fetch all in \"{cursorValue}\"", connection, transaction))
+            {
+                var reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
                     list.Add(mapper(reader));
                 }
-                reader.Close();
+                await reader.CloseAsync();
             }
 
-            transaction.Commit();
-            connection.Close();
+            await transaction.CommitAsync();
+            await connection.CloseAsync();
             return list;
         }
     }
