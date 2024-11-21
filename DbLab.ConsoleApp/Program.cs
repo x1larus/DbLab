@@ -1,10 +1,14 @@
-﻿namespace DbLab.ConsoleApp
+﻿using DbLab.DalPg.Managers;
+
+namespace DbLab.ConsoleApp
 {
     internal class Program
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
+            var manager = new TestTableManager();
+            var data = manager.ReadAll();
+            return;
         }
     }
 }
