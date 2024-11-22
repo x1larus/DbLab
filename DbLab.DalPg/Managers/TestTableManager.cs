@@ -4,7 +4,7 @@ using NpgsqlTypes;
 
 namespace DbLab.DalPg.Managers
 {
-    public class TestTableManager : PostgresManager
+    public class TestTableManager : PostgresManagerBase
     {
         public List<TestTableEntity> ReadAll()
         {

@@ -7,7 +7,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+
   <ItemGroup>
+    <ProjectReference Include="..\DbLab.DalPgBase\DbLab.DalPgBase.csproj" />
     <ProjectReference Include="..\DbLab.DalPg\DbLab.DalPg.csproj" />
   </ItemGroup>
 

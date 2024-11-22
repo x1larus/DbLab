@@ -8,7 +8,7 @@ namespace DbLab.DalPgBase
     /// <summary>
     /// Родитель для всех менеджеров
     /// </summary>
-    public abstract class PostgresManager
+    public abstract class PostgresManagerBase
     {
         protected const string CursorName = "ref";
 
@@ -22,34 +22,19 @@ namespace DbLab.DalPgBase
         /// <returns></returns>
         protected async Task<List<T>> ExecuteCursorFunction<T>(string funcName, Func<NpgsqlDataReader, T> mapper, params (string Name, object Value, NpgsqlDbType Type)[] parameters)
         {
-            var query = new StringBuilder($"select {funcName}(");
-            var queryParamsList = new List<NpgsqlParameter>();
+            var query = $"select {funcName}{CreateParametersQuery(parameters)}";
             var result = new List<T>();
 
-            // собираем параметры
-            foreach (var inParam in parameters)
-            {
-                query.Append($"@{inParam.Name}, ");
-                queryParamsList.Add(new NpgsqlParameter
-                { ParameterName = inParam.Name, Value = inParam.Value, NpgsqlDbType = inParam.Type });
-            }
-
-            // добавляем курсорную переменную
-            var cursorValue = Guid.NewGuid().ToString("N");
-            query.Append($"@{CursorName})");
-            queryParamsList.Add(new NpgsqlParameter { ParameterName = CursorName, Value = cursorValue, NpgsqlDbType = NpgsqlDbType.Refcursor });
-
-
-            await using var connection = BaseBuilder.GetConnection();
-            await connection.OpenAsync();
+            await using var connection = await DbManager.GetConnectionAsync();
 
             // Делаем все в транзакции
             await using var transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted);
 
+            string? cursorValue = "";
             // Вызываем функцию
             await using (var cmd = new NpgsqlCommand(query.ToString(), connection, transaction))
             {
-                cmd.Parameters.AddRange(queryParamsList.ToArray());
+                cmd.Parameters.AddRange(CreateParameters(parameters));
                 await using var reader = await cmd.ExecuteReaderAsync();
                 while (await reader.ReadAsync())
                 {
@@ -60,8 +45,8 @@ namespace DbLab.DalPgBase
             // Извлекаем данные из курсора и мапим
             await using (var cmd = new NpgsqlCommand($"fetch all in \"{cursorValue}\"", connection, transaction))
             {
-                var reader = cmd.ExecuteReader();
-                while (reader.Read())
+                await using var reader = await cmd.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
                 {
                     result.Add(mapper(reader));
                 }
@@ -69,8 +54,33 @@ namespace DbLab.DalPgBase
             }
 
             await transaction.CommitAsync();
-            await connection.CloseAsync();
             return result;
         }
+
+        #region private
+
+        private static NpgsqlParameter[] CreateParameters((string Name, object Value, NpgsqlDbType Type)[] parameters)
+        {
+            return parameters.Select(el => new NpgsqlParameter { ParameterName = el.Name, Value = el.Value, NpgsqlDbType = el.Type }).ToArray();
+        }
+
+        private static string CreateParametersQuery((string Name, object Value, NpgsqlDbType Type)[] parameters)
+        {
+            if (parameters == null || parameters.Length == 0)
+                return "()";
+
+            var res = new StringBuilder("(");
+
+            for (var i = 0; i < parameters.Length; ++i)
+            {
+                res.Append($"@{parameters[i].Name}");
+                res.Append(i != parameters.Length - 1 ? "," : "");
+            }
+            res.Append(')');
+
+            return res.ToString();
+        }
+
+        #endregion
     }
 }
