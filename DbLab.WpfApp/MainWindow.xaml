@@ -3,13 +3,35 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:DbLab.WpfApp"
+        xmlns:local="clr-namespace:DbLab.WpfApp" 
+        d:DataContext="{d:DesignInstance Type=local:MainWindowModel}"
         mc:Ignorable="d"
         Title="Учет бюджета" d:DesignHeight="401.258" d:DesignWidth="716.181">
+    
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="200"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
+        
+        <ScrollViewer Grid.Column="0"
+                      HorizontalScrollBarVisibility="Hidden"
+                      VerticalScrollBarVisibility="Hidden">
+
+            <ListBox 
+                ItemsSource="{Binding Path=Tabs, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                SelectedItem="{Binding Path=SelectedTab, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                SelectionMode="Single"
+                SelectionChanged="Selector_OnSelected">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Path=TabName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </ScrollViewer>
+
+        <ContentControl Grid.Column="1" Content="{Binding Path=CurrentControl}"/>
+
     </Grid>
 </Window>
