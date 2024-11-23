@@ -17,7 +17,7 @@ namespace DbLab.WpfApp
             InitializeComponent();
             _model = new MainWindowModel();
             _model.Tabs.Add(new TabModel { TabName = "Главная", Control = typeof(DashboardControl) });
-            _model.Tabs.Add(new TabModel { TabName = "хуй", Control = typeof(DashboardControl) });
+            _model.Tabs.Add(new TabModel { TabName = "хуй", Control = typeof(AnotherControl) });
             DataContext = _model;
         }
 
