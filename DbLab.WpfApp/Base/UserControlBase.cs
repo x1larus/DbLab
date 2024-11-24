@@ -2,7 +2,8 @@
 
 namespace DbLab.WpfApp.Base
 {
-    public class UserControlBase : UserControl
+    public abstract class UserControlBase : UserControl
     {
+
     }
 }

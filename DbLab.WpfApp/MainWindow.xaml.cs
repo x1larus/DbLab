@@ -3,6 +3,7 @@ using DbLab.WpfApp.Extensions;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using DbLab.WpfApp.Base;
 
 namespace DbLab.WpfApp
 {
@@ -21,22 +22,22 @@ namespace DbLab.WpfApp
             DataContext = _model;
         }
 
-        private void Selector_OnSelected(object sender, RoutedEventArgs e)
+        private void Tab_SelectionChanged(object sender, RoutedEventArgs e)
         {
             if (_model.SelectedTab == null) return;
 
-            _model.CurrentControl = Activator.CreateInstance(_model.SelectedTab.Control) as UserControl;
+            _model.CurrentControl = Activator.CreateInstance(_model.SelectedTab.Control) as UserControlBase;
         }
     }
 
     public class MainWindowModel : PropertyChangedModel
     {
-        private UserControl? _currentControl;
+        private UserControlBase? _currentControl;
         public ObservableCollection<TabModel> Tabs { get; set; } = new ObservableCollection<TabModel>();
 
         public TabModel? SelectedTab { get; set; }
 
-        public UserControl? CurrentControl
+        public UserControlBase? CurrentControl
         {
             get => _currentControl;
             set

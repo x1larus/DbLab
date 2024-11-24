@@ -22,7 +22,7 @@
                 ItemsSource="{Binding Path=Tabs, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                 SelectedItem="{Binding Path=SelectedTab, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                 SelectionMode="Single"
-                SelectionChanged="Selector_OnSelected">
+                SelectionChanged="Tab_SelectionChanged">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding Path=TabName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
