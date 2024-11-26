@@ -15,8 +15,6 @@ namespace DbLab.WpfApp
         private readonly MainWindowModel _model;
         public MainWindow()
         {
-            var connectionString = "Host=79.137.204.140;Port=5432;Username=db_lab_app;Password=db_lab_app;Database=db_lab";
-            DbManager.InitializeDb(connectionString);
             InitializeComponent();
             _model = new MainWindowModel();
             _model.Tabs.Add(new TabModel { TabName = "Главная", Control = typeof(DashboardControl) });

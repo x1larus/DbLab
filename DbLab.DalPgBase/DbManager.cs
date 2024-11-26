@@ -4,16 +4,11 @@ namespace DbLab.DalPgBase
 {
     public static class DbManager
     {
-        private static NpgsqlDataSource? DataSource;
+        private static readonly NpgsqlDataSource DataSource = NpgsqlDataSource.Create("Host=79.137.204.140;Port=5432;Username=db_lab_app;Password=db_lab_app;Database=db_lab");
 
-        public static void InitializeDb(string connectionString)
+        public static NpgsqlConnection GetConnection()
         {
-            DataSource = NpgsqlDataSource.Create(connectionString);
-        }
-
-        public static async ValueTask<NpgsqlConnection> GetConnectionAsync()
-        {
-            return await DataSource.OpenConnectionAsync();
+            return DataSource.OpenConnection();
         }
     }
 }

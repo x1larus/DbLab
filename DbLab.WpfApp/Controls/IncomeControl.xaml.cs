@@ -1,4 +1,6 @@
 ﻿using System.Collections.ObjectModel;
+using System.Net.Mime;
+using System.Windows;
 using DbLab.DalPg.Entities;
 using DbLab.DalPg.Managers;
 using DbLab.WpfApp.Base;
@@ -16,12 +18,29 @@ namespace DbLab.WpfApp.Controls
             _model = new IncomeControlModel();
             DataContext = _model;
             InitializeComponent();
+            var a = GetData();
+        }
+
+        public async Task GetData()
+        {
+            var lst = new IncomeManager().ReadAll();
+            await Task.Delay(5000);
+            foreach (var ent in lst)
+            {
+                Application.Current.Dispatcher.Invoke(() => { _model.IncomeRows.Add(new IncomeRowModel(ent)); });
+            }
+            //var a = () =>
+            //{
+                
+
+            //    return Task.CompletedTask;
+            //};
         }
     }
 
     public class IncomeControlModel : NotifyPropertyChangedItem
     {
-        public ObservableCollection<IncomeRowModel> IncomeRows { get; set; } = new ObservableCollection<IncomeRowModel>(new IncomeManager().ReadAll().Select(el => new IncomeRowModel(el)));
+        public ObservableCollection<IncomeRowModel> IncomeRows { get; set; } = new ObservableCollection<IncomeRowModel>();
     }
 
     public class IncomeRowModel : NotifyPropertyChangedItem

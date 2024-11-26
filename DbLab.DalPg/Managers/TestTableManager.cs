@@ -13,7 +13,7 @@ namespace DbLab.DalPg.Managers
                 Id = reader.GetFieldValue<long?>("id"),
                 Data = reader.GetFieldValue<string>("data"),
                 Type = reader.GetFieldValue<int?>("type")
-            }).Result;
+            });
         }
 
         public List<TestTableEntity> ReadByType(int type)
@@ -23,7 +23,7 @@ namespace DbLab.DalPg.Managers
                 Id = reader.GetFieldValue<long?>("id"),
                 Data = reader.GetFieldValue<string>("data"),
                 Type = reader.GetFieldValue<int?>("type")
-            }, ("vp_type", type, NpgsqlDbType.Integer)).Result;
+            }, ("vp_type", type, NpgsqlDbType.Integer));
         }
     }
 }

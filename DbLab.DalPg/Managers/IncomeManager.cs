@@ -16,7 +16,7 @@ namespace DbLab.DalPg.Managers
                 Comment = reader.GetFieldValue<string?>("comment"),
                 IdIncomeType = reader.GetFieldValue<long>("id_income_type"),
                 IncomeTypeName = reader.GetFieldValue<string?>("type_name")
-            }).Result;
+            });
         }
 
         public void Write(IncomeEntity ent)

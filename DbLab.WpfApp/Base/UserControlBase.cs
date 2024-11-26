@@ -1,9 +1,9 @@
-﻿using System.Windows.Controls;
+﻿using System.ComponentModel;
+using System.Windows.Controls;
 
 namespace DbLab.WpfApp.Base
 {
     public abstract class UserControlBase : UserControl
     {
-
     }
 }

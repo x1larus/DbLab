@@ -10,8 +10,6 @@ namespace DbLab.DalPgBase
     /// </summary>
     public abstract class PostgresManagerBase
     {
-        protected const string CursorName = "ref";
-
         /// <summary>
         /// Выполнить функцию, возвращающую курсор
         /// </summary>
@@ -20,53 +18,53 @@ namespace DbLab.DalPgBase
         /// <param name="mapper">Функция-мапер/></param>
         /// <param name="parameters">Входные параметры функции. ПОРЯДОК ВАЖЕН!</param>
         /// <returns></returns>
-        protected async Task<List<T>> ExecuteCursorFunction<T>(string funcName, Func<NpgsqlDataReader, T> mapper, params (string Name, object? Value, NpgsqlDbType Type)[] parameters)
+        protected List<T> ExecuteCursorFunction<T>(string funcName, Func<NpgsqlDataReader, T> mapper, params (string Name, object? Value, NpgsqlDbType Type)[] parameters)
         {
             var query = $"select {funcName}{CreateParametersQuery(parameters)}";
             var result = new List<T>();
 
-            await using var connection = await DbManager.GetConnectionAsync();
+            using var connection = DbManager.GetConnection();
 
             // Делаем все в транзакции
-            await using var transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted);
+            using var transaction = connection.BeginTransaction(IsolationLevel.ReadCommitted);
 
             string? cursorValue = "";
             // Вызываем функцию
-            await using (var cmd = new NpgsqlCommand(query, connection, transaction))
+            using (var cmd = new NpgsqlCommand(query, connection, transaction))
             {
                 cmd.Parameters.AddRange(CreateParameters(parameters));
-                await using var reader = await cmd.ExecuteReaderAsync();
-                while (await reader.ReadAsync())
+                using var reader = cmd.ExecuteReader();
+                while (reader.Read())
                 {
                     cursorValue = reader.GetValue(0).ToString();
                 }
             }
 
             // Извлекаем данные из курсора и мапим
-            await using (var cmd = new NpgsqlCommand($"fetch all in \"{cursorValue}\"", connection, transaction))
+            using (var cmd = new NpgsqlCommand($"fetch all in \"{cursorValue}\"", connection, transaction))
             {
-                await using var reader = await cmd.ExecuteReaderAsync();
-                while (await reader.ReadAsync())
+                using var reader = cmd.ExecuteReader();
+                while (reader.Read())
                 {
                     result.Add(mapper(reader));
                 }
-                await reader.CloseAsync();
+                reader.Close();
             }
 
-            await transaction.CommitAsync();
+            transaction.Commit();
             return result;
         }
 
-        protected async ValueTask<T> ExecuteFunction<T>(string funcName,
+        protected async ValueTask<T?> ExecuteFunction<T>(string funcName,
             params (string Name, object? Value, NpgsqlDbType Type)[] parameters)
         {
             var query = $"select {funcName}{CreateParametersQuery(parameters)}";
-            await using var connection = await DbManager.GetConnectionAsync();
+            await using var connection = DbManager.GetConnection();
             await using var cmd = new NpgsqlCommand(query, connection);
             cmd.Parameters.AddRange(CreateParameters(parameters));
             await using var reader = await cmd.ExecuteReaderAsync();
 
-            T res = default;
+            T? res = default;
 
             while (await reader.ReadAsync())
             {

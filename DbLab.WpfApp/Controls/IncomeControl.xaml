@@ -11,7 +11,7 @@
         <DataGrid ItemsSource="{Binding Path=IncomeRows, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                   AutoGenerateColumns="False">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Дата" Binding="{Binding Path=Data}"/>
+                <DataGridTextColumn Header="Дата" Binding="{Binding Path=Date}"/>
                 <DataGridTextColumn Header="Сумма" Binding="{Binding Path=Sum}"/>
                 <DataGridTextColumn Header="Тип" Binding="{Binding Path=IncomeTypeName}"/>
                 <DataGridTextColumn Header="Комментарий" Binding="{Binding Path=Comment}"/>
