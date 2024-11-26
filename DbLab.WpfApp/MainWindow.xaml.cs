@@ -1,9 +1,7 @@
-﻿using DbLab.WpfApp.Controls;
+﻿using DbLab.WpfApp.Base;
+using DbLab.WpfApp.Controls;
 using System.Collections.ObjectModel;
 using System.Windows;
-using System.Windows.Controls;
-using DbLab.WpfApp.Base;
-using DbLab.DalPgBase;
 
 namespace DbLab.WpfApp
 {
@@ -13,13 +11,20 @@ namespace DbLab.WpfApp
     public partial class MainWindow : Window
     {
         private readonly MainWindowModel _model;
+        
         public MainWindow()
         {
-            InitializeComponent();
             _model = new MainWindowModel();
-            _model.Tabs.Add(new TabModel { TabName = "Главная", Control = typeof(DashboardControl) });
-            _model.Tabs.Add(new TabModel { TabName = "хуй", Control = typeof(IncomeControl) });
             DataContext = _model;
+
+            RegisterTabs();
+
+            InitializeComponent();
+        }
+
+        public void RegisterTabs()
+        {
+            _model.Tabs.Add(new TabModel("Доходы", typeof(IncomeControl)));
         }
 
         private void Tab_SelectionChanged(object sender, RoutedEventArgs e)
@@ -50,6 +55,12 @@ namespace DbLab.WpfApp
 
     public class TabModel : NotifyPropertyChangedItem
     {
+        public TabModel(string tabName, Type control)
+        {
+            TabName = tabName;
+            Control = control;
+        }
+
         public string TabName { get; set; }
 
         public Type Control { get; set; }

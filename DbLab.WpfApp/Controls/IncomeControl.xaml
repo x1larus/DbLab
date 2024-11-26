@@ -7,8 +7,9 @@
              xmlns:base="clr-namespace:DbLab.WpfApp.Base" d:DataContext="{d:DesignInstance Type=local:IncomeControlModel}"
                       mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid Background="Chartreuse">
-        <DataGrid ItemsSource="{Binding Path=IncomeRows, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+    <DockPanel>
+        <DataGrid DockPanel.Dock="Top" 
+                  ItemsSource="{Binding Path=IncomeRows, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                   AutoGenerateColumns="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Дата" Binding="{Binding Path=Date}"/>
@@ -17,5 +18,9 @@
                 <DataGridTextColumn Header="Комментарий" Binding="{Binding Path=Comment}"/>
             </DataGrid.Columns>
         </DataGrid>
-    </Grid>
+
+        <Button DockPanel.Dock="Bottom"
+                Command="{Binding AddChargeCommand}"
+                CommandParameter="123"/>
+    </DockPanel>
 </base:UserControlBase>

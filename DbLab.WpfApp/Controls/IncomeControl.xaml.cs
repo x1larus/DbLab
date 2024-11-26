@@ -1,9 +1,7 @@
-﻿using System.Collections.ObjectModel;
-using System.Net.Mime;
-using System.Windows;
-using DbLab.DalPg.Entities;
+﻿using DbLab.DalPg.Entities;
 using DbLab.DalPg.Managers;
 using DbLab.WpfApp.Base;
+using System.Collections.ObjectModel;
 
 namespace DbLab.WpfApp.Controls
 {
@@ -13,51 +11,90 @@ namespace DbLab.WpfApp.Controls
     public partial class IncomeControl : UserControlBase
     {
         public readonly IncomeControlModel _model;
+
         public IncomeControl()
         {
             _model = new IncomeControlModel();
             DataContext = _model;
             InitializeComponent();
-            var a = GetData();
+
+            ExecuteAsync(GetIncomeData);
         }
 
-        public async Task GetData()
+        private void GetIncomeData()
         {
             var lst = new IncomeManager().ReadAll();
-            await Task.Delay(5000);
-            foreach (var ent in lst)
+            ExecuteInUiThread(() =>
             {
-                Application.Current.Dispatcher.Invoke(() => { _model.IncomeRows.Add(new IncomeRowModel(ent)); });
-            }
-            //var a = () =>
-            //{
-                
-
-            //    return Task.CompletedTask;
-            //};
+                foreach (var ent in lst)
+                    _model.IncomeRows.Add(new IncomeRowModel(ent));
+            });
         }
     }
 
     public class IncomeControlModel : NotifyPropertyChangedItem
     {
         public ObservableCollection<IncomeRowModel> IncomeRows { get; set; } = new ObservableCollection<IncomeRowModel>();
+
+        public UiCommand AddChargeCommand => new UiCommand(AddCharge);
+
+        private void AddCharge(object? obj)
+        {
+            // Работает, проверено
+        }
     }
 
     public class IncomeRowModel : NotifyPropertyChangedItem
     {
         private readonly IncomeEntity _entity;
-        
+
         public IncomeRowModel(IncomeEntity entity)
         {
             _entity = entity;
         }
 
-        public decimal Sum => _entity.Summ;
+        #region Properties
 
-        public string? IncomeTypeName => _entity.IncomeTypeName;
+        public decimal Sum
+        {
+            get => _entity.Summ;
+            set
+            {
+                _entity.Summ = value;
+                OnPropertyChanged();
+            }
+        }
 
-        public DateTime Date => _entity.Date;
+        public string? IncomeTypeName
+        {
+            get => _entity.IncomeTypeName;
+            set
+            {
+                _entity.IncomeTypeName = value;
+                OnPropertyChanged();
+            }
+        }
 
-        public string? Comment => _entity.Comment;
+        public DateTime Date
+        {
+            get => _entity.Date;
+            set
+            {
+                _entity.Date = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string? Comment
+        {
+            get => _entity.Comment;
+            set
+            {
+                _entity.Comment = value;
+                OnPropertyChanged();
+            }
+        }
+
+        #endregion
     }
 }

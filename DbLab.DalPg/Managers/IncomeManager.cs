@@ -1,4 +1,5 @@
-﻿using DbLab.DalPg.Entities;
+﻿using DbLab.DalPg.Base;
+using DbLab.DalPg.Entities;
 using DbLab.DalPgBase;
 using NpgsqlTypes;
 
@@ -26,7 +27,7 @@ namespace DbLab.DalPg.Managers
                 ("vp_date", ent.Date, NpgsqlDbType.Date),
                 ("vp_summ", ent.Summ, NpgsqlDbType.Numeric),
                 ("vp_comment", ent.Comment, NpgsqlDbType.Varchar),
-                ("vp_id_income_type", ent.IdIncomeType, NpgsqlDbType.Bigint)).Result;
+                ("vp_id_income_type", ent.IdIncomeType, NpgsqlDbType.Bigint));
             ent.Id = res;
         }
     }

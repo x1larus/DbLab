@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DbLab.DalPgBase\DbLab.DalPgBase.csproj" />
+    <PackageReference Include="Npgsql" Version="9.0.1" />
   </ItemGroup>
 
 </Project>
