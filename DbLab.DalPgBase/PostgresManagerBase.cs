@@ -20,7 +20,7 @@ namespace DbLab.DalPgBase
         /// <param name="mapper">Функция-мапер/></param>
         /// <param name="parameters">Входные параметры функции. ПОРЯДОК ВАЖЕН!</param>
         /// <returns></returns>
-        protected async Task<List<T>> ExecuteCursorFunction<T>(string funcName, Func<NpgsqlDataReader, T> mapper, params (string Name, object Value, NpgsqlDbType Type)[] parameters)
+        protected async Task<List<T>> ExecuteCursorFunction<T>(string funcName, Func<NpgsqlDataReader, T> mapper, params (string Name, object? Value, NpgsqlDbType Type)[] parameters)
         {
             var query = $"select {funcName}{CreateParametersQuery(parameters)}";
             var result = new List<T>();
@@ -32,7 +32,7 @@ namespace DbLab.DalPgBase
 
             string? cursorValue = "";
             // Вызываем функцию
-            await using (var cmd = new NpgsqlCommand(query.ToString(), connection, transaction))
+            await using (var cmd = new NpgsqlCommand(query, connection, transaction))
             {
                 cmd.Parameters.AddRange(CreateParameters(parameters));
                 await using var reader = await cmd.ExecuteReaderAsync();
@@ -57,14 +57,33 @@ namespace DbLab.DalPgBase
             return result;
         }
 
-        #region private
-
-        private static NpgsqlParameter[] CreateParameters((string Name, object Value, NpgsqlDbType Type)[] parameters)
+        protected async ValueTask<T> ExecuteFunction<T>(string funcName,
+            params (string Name, object? Value, NpgsqlDbType Type)[] parameters)
         {
-            return parameters.Select(el => new NpgsqlParameter { ParameterName = el.Name, Value = el.Value, NpgsqlDbType = el.Type }).ToArray();
+            var query = $"select {funcName}{CreateParametersQuery(parameters)}";
+            await using var connection = await DbManager.GetConnectionAsync();
+            await using var cmd = new NpgsqlCommand(query, connection);
+            cmd.Parameters.AddRange(CreateParameters(parameters));
+            await using var reader = await cmd.ExecuteReaderAsync();
+
+            T res = default;
+
+            while (await reader.ReadAsync())
+            {
+                res = reader.GetFieldValue<T>(0);
+            }
+
+            return res;
         }
 
-        private static string CreateParametersQuery((string Name, object Value, NpgsqlDbType Type)[] parameters)
+        #region private
+
+        private static NpgsqlParameter[] CreateParameters((string Name, object? Value, NpgsqlDbType Type)[] parameters)
+        {
+            return parameters.Select(el => new NpgsqlParameter { ParameterName = el.Name, Value = el.Value ?? DBNull.Value, NpgsqlDbType = el.Type }).ToArray();
+        }
+
+        private static string CreateParametersQuery((string Name, object? Value, NpgsqlDbType Type)[] parameters)
         {
             if (parameters == null || parameters.Length == 0)
                 return "()";

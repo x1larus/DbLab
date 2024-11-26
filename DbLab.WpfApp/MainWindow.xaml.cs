@@ -1,9 +1,9 @@
 ﻿using DbLab.WpfApp.Controls;
-using DbLab.WpfApp.Extensions;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using DbLab.WpfApp.Base;
+using DbLab.DalPgBase;
 
 namespace DbLab.WpfApp
 {
@@ -15,10 +15,12 @@ namespace DbLab.WpfApp
         private readonly MainWindowModel _model;
         public MainWindow()
         {
+            var connectionString = "Host=79.137.204.140;Port=5432;Username=db_lab_app;Password=db_lab_app;Database=db_lab";
+            DbManager.InitializeDb(connectionString);
             InitializeComponent();
             _model = new MainWindowModel();
             _model.Tabs.Add(new TabModel { TabName = "Главная", Control = typeof(DashboardControl) });
-            _model.Tabs.Add(new TabModel { TabName = "хуй", Control = typeof(AnotherControl) });
+            _model.Tabs.Add(new TabModel { TabName = "хуй", Control = typeof(IncomeControl) });
             DataContext = _model;
         }
 
@@ -30,7 +32,7 @@ namespace DbLab.WpfApp
         }
     }
 
-    public class MainWindowModel : PropertyChangedModel
+    public class MainWindowModel : NotifyPropertyChangedItem
     {
         private UserControlBase? _currentControl;
         public ObservableCollection<TabModel> Tabs { get; set; } = new ObservableCollection<TabModel>();
@@ -48,7 +50,7 @@ namespace DbLab.WpfApp
         }
     }
 
-    public class TabModel : PropertyChangedModel
+    public class TabModel : NotifyPropertyChangedItem
     {
         public string TabName { get; set; }
 

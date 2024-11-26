@@ -11,7 +11,7 @@ namespace DbLab.DalPgBase
             DataSource = NpgsqlDataSource.Create(connectionString);
         }
 
-        public async static ValueTask<NpgsqlConnection> GetConnectionAsync()
+        public static async ValueTask<NpgsqlConnection> GetConnectionAsync()
         {
             return await DataSource.OpenConnectionAsync();
         }

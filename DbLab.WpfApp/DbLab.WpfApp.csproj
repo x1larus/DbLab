@@ -8,4 +8,8 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DbLab.DalPg\DbLab.DalPg.csproj" />
+  </ItemGroup>
+
 </Project>

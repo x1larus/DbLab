@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace DbLab.WpfApp.Extensions
+namespace DbLab.WpfApp.Base
 {
-    public class PropertyChangedModel : INotifyPropertyChanged
+    public class NotifyPropertyChangedItem : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
