@@ -1,0 +1,46 @@
+﻿<Window x:Class="DbLab.WpfApp.Windows.AddIncomeWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DbLab.WpfApp.Windows"
+        mc:Ignorable="d"
+        Title="AddIncomeWindow">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Grid.Row="0" Grid.Column="0" 
+                       Text="Дата: "/>
+        <DatePicker Grid.Row="0" Grid.Column="1"/>
+
+        <TextBlock Grid.Row="1" Grid.Column="0"
+                   Text="Сумма: "/>
+        <TextBox Grid.Row="1" Grid.Column="1"/>
+
+        <TextBlock Grid.Row="2" Grid.Column="0"
+                   Text="Тип: "/>
+        <ComboBox Grid.Row="2" Grid.Column="1"/>
+
+        <TextBlock Grid.Row="3" Grid.Column="0" 
+                   Text="Комментарий: "/>
+        <TextBox Grid.Row="3" Grid.Column="1"/>
+
+        <Button Grid.Row="4" Grid.Column="0">
+            <TextBox Text="ok"/>
+        </Button>
+
+        <Button Grid.Row="4" Grid.Column="1">
+            <TextBox Text="cancel"/>
+        </Button>
+    </Grid>
+</Window>
