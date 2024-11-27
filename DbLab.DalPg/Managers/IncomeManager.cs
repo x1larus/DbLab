@@ -6,22 +6,22 @@ namespace DbLab.DalPg.Managers
 {
     public class IncomeManager : PostgresManagerBase
     {
-        public List<IncomeEntity> ReadAll()
+        public async Task<List<IncomeEntity>> ReadAll()
         {
-            return ExecuteCursorFunction("public.income_get_all", reader => new IncomeEntity
+            return await ExecuteCursorFunction(PgNames.FIncomeReadAll, async reader => new IncomeEntity
             {
-                Id = reader.GetFieldValue<long>("id"),
-                Date = reader.GetFieldValue<DateTime>("date"),
-                Summ = reader.GetFieldValue<decimal>("summ"),
-                Comment = reader.GetFieldValue<string?>("comment"),
-                IdIncomeType = reader.GetFieldValue<long>("id_income_type"),
-                IncomeTypeName = reader.GetFieldValue<string?>("type_name")
+                Id = await reader.GetFieldValueAsync<long>("id"),
+                Date = await reader.GetFieldValueAsync<DateTime>("date"),
+                Summ = await reader.GetFieldValueAsync<decimal>("summ"),
+                Comment = await reader.GetFieldValueAsync<string?>("comment"),
+                IdIncomeType = await reader.GetFieldValueAsync<long>("id_income_type"),
+                IncomeTypeName = await reader.GetFieldValueAsync<string?>("type_name")
             });
         }
 
-        public void Write(IncomeEntity ent)
+        public async void Write(IncomeEntity ent)
         {
-            var res = ExecuteFunction<long?>("public.income_write",
+            var res = await ExecuteFunction<long?>(PgNames.FIncomeWrite,
                 ("vp_id", ent.Id, NpgsqlDbType.Bigint),
                 ("vp_date", ent.Date, NpgsqlDbType.Date),
                 ("vp_summ", ent.Summ, NpgsqlDbType.Numeric),

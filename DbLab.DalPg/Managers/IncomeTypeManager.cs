@@ -5,12 +5,12 @@ namespace DbLab.DalPg.Managers
 {
     public class IncomeTypeManager : PostgresManagerBase
     {
-        public List<IncomeTypeEntity> ReadAll()
+        public async Task<List<IncomeTypeEntity>> ReadAll()
         {
-            return ExecuteCursorFunction("public.f$income_type_read_all", reader => new IncomeTypeEntity
+            return await ExecuteCursorFunction(PgNames.FIncomeTypeReadAll, async reader => new IncomeTypeEntity
             {
-                Id = reader.GetFieldValue<long>("id"),
-                TypeName = reader.GetFieldValue<string>("type_name")
+                Id = await reader.GetFieldValueAsync<long>("id"),
+                TypeName = await reader.GetFieldValueAsync<string>("type_name")
             });
         }
     }

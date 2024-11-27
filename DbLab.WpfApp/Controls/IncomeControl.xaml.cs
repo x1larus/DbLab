@@ -18,18 +18,14 @@ namespace DbLab.WpfApp.Controls
             _model = new IncomeControlModel();
             DataContext = _model;
             InitializeComponent();
-
-            ExecuteAsync(GetIncomeData);
+            GetIncomeDataAsync();
         }
 
-        private void GetIncomeData()
+        private async void GetIncomeDataAsync()
         {
-            var lst = new IncomeManager().ReadAll();
-            ExecuteInUiThread(() =>
-            {
-                foreach (var ent in lst)
-                    _model.IncomeRows.Add(new IncomeRowModel(ent));
-            });
+            var lst = await new IncomeManager().ReadAll();
+            foreach (var ent in lst)
+                _model.IncomeRows.Add(new IncomeRowModel(ent));
         }
     }
 

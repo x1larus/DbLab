@@ -1,8 +1,7 @@
-﻿using System.Collections.ObjectModel;
-using System.Windows;
-using DbLab.DalPg.Entities;
-using DbLab.DalPg.Managers;
+﻿using DbLab.DalPg.Entities;
 using DbLab.WpfApp.Base;
+using System.Collections.ObjectModel;
+using System.Windows;
 
 namespace DbLab.WpfApp.Windows
 {
@@ -26,7 +25,7 @@ namespace DbLab.WpfApp.Windows
         public AddIncomeWindow Parent;
 
         public ObservableCollection<IncomeTypeEntity> IncomeTypeList { get; set; } =
-            new ObservableCollection<IncomeTypeEntity>(new IncomeTypeManager().ReadAll());
+            new ObservableCollection<IncomeTypeEntity>();
 
         #region Private
         
