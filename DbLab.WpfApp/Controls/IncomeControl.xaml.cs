@@ -2,6 +2,7 @@
 using DbLab.DalPg.Managers;
 using DbLab.WpfApp.Base;
 using System.Collections.ObjectModel;
+using DbLab.WpfApp.Windows;
 
 namespace DbLab.WpfApp.Controls
 {
@@ -40,7 +41,17 @@ namespace DbLab.WpfApp.Controls
 
         private void AddCharge(object? obj)
         {
-            // Работает, проверено
+            var model = new AddIncomeWindowModel();
+            var window = new AddIncomeWindow(model);
+            window.ShowDialog();
+            if (window.DialogResult ?? false)
+            {
+                var business = model.GetBusinessEntity();
+                if (business != null)
+                {
+                    IncomeRows.Add(new IncomeRowModel(business));
+                }
+            }
         }
     }
 
