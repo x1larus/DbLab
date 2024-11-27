@@ -1,6 +1,6 @@
 ﻿using Npgsql;
 
-namespace DbLab.DalPgBase
+namespace DbLab.DalPg.Base
 {
     public static class PostgresExtensions
     {

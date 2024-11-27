@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows;
 using DbLab.DalPg.Entities;
+using DbLab.DalPg.Managers;
 using DbLab.WpfApp.Base;
 
 namespace DbLab.WpfApp.Windows
@@ -10,10 +11,12 @@ namespace DbLab.WpfApp.Windows
     /// </summary>
     public partial class AddIncomeWindow : Window
     {
+        private readonly AddIncomeWindowModel _model;
         public AddIncomeWindow(AddIncomeWindowModel model)
         {
             model.Parent = this;
-            DataContext = model;
+            _model = model;
+            DataContext = _model;
             InitializeComponent();
         }
     }
@@ -23,7 +26,7 @@ namespace DbLab.WpfApp.Windows
         public AddIncomeWindow Parent;
 
         public ObservableCollection<IncomeTypeEntity> IncomeTypeList { get; set; } =
-            new ObservableCollection<IncomeTypeEntity> {new IncomeTypeEntity {Id = 1, TypeName = "надо с базы прирутить))"}};
+            new ObservableCollection<IncomeTypeEntity>(new IncomeTypeManager().ReadAll());
 
         #region Private
         
@@ -72,7 +75,10 @@ namespace DbLab.WpfApp.Windows
             if (Validate())
             {
                 Parent.DialogResult = true;
+                return;
             }
+
+            MessageBox.Show("Говно, переделывай");
         }
 
         private void CancelButtonPressed(object? obj)

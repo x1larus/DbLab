@@ -1,6 +1,5 @@
 ﻿using DbLab.DalPg.Base;
 using DbLab.DalPg.Entities;
-using DbLab.DalPgBase;
 using NpgsqlTypes;
 
 namespace DbLab.DalPg.Managers
