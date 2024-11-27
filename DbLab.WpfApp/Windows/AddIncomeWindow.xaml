@@ -46,12 +46,12 @@
                  Text="{Binding Path=Comment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
         <Button Grid.Row="4" Grid.Column="0"
-                Command="{Binding Path=OkButtonPressedCommand}">
+                Click="OkButton_OnClick">
             <TextBlock Text="ok"/>
         </Button>
 
         <Button Grid.Row="4" Grid.Column="1"
-                Command="{Binding CancelButtonPressedCommand, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                Click="CancelButton_OnClick">
             <TextBlock Text="cancel"/>
         </Button>
     </Grid>

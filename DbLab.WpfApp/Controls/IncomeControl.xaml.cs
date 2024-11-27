@@ -1,8 +1,8 @@
 ﻿using DbLab.DalPg.Entities;
 using DbLab.DalPg.Managers;
 using DbLab.WpfApp.Base;
-using System.Collections.ObjectModel;
 using DbLab.WpfApp.Windows;
+using System.Collections.ObjectModel;
 
 namespace DbLab.WpfApp.Controls
 {
@@ -11,7 +11,7 @@ namespace DbLab.WpfApp.Controls
     /// </summary>
     public partial class IncomeControl : UserControlBase
     {
-        public readonly IncomeControlModel _model;
+        private readonly IncomeControlModel _model;
 
         public IncomeControl()
         {
@@ -31,23 +31,18 @@ namespace DbLab.WpfApp.Controls
 
     public class IncomeControlModel : NotifyPropertyChangedItem
     {
-        public ObservableCollection<IncomeRowModel> IncomeRows { get; set; } = new ObservableCollection<IncomeRowModel>();
+        public ObservableCollection<IncomeRowModel> IncomeRows { get; set; } = [];
 
-        public UiCommand AddChargeCommand => new UiCommand(AddCharge);
+        public UiCommand AddChargeCommand => new(AddCharge);
 
         private void AddCharge(object? obj)
         {
-            var model = new AddIncomeWindowModel();
-            var window = new AddIncomeWindow(model);
+            var window = new AddIncomeWindow();
             window.ShowDialog();
-            if (window.DialogResult ?? false)
-            {
-                var business = model.GetBusinessEntity();
-                if (business != null)
-                {
-                    IncomeRows.Add(new IncomeRowModel(business));
-                }
-            }
+            if (!(window.DialogResult ?? false)) return;
+
+            var business = window.GetBusinessEntity();
+            IncomeRows.Add(new IncomeRowModel(business));
         }
     }
 
@@ -55,10 +50,7 @@ namespace DbLab.WpfApp.Controls
     {
         private readonly IncomeEntity _entity;
 
-        public IncomeRowModel(IncomeEntity entity)
-        {
-            _entity = entity;
-        }
+        public IncomeRowModel(IncomeEntity entity) => _entity = entity;
 
         #region Properties
 

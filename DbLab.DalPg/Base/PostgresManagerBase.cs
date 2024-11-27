@@ -93,7 +93,7 @@ namespace DbLab.DalPg.Base
 
         private static string CreateParametersQuery((string Name, object? Value, NpgsqlDbType Type)[] parameters)
         {
-            if (parameters == null || parameters.Length == 0)
+            if (parameters.Length == 0)
                 return "()";
 
             var res = new StringBuilder("(");

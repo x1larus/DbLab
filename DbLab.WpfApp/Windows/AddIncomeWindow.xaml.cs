@@ -2,6 +2,7 @@
 using DbLab.WpfApp.Base;
 using System.Collections.ObjectModel;
 using System.Windows;
+using DbLab.DalPg.Managers;
 
 namespace DbLab.WpfApp.Windows
 {
@@ -11,21 +12,45 @@ namespace DbLab.WpfApp.Windows
     public partial class AddIncomeWindow : Window
     {
         private readonly AddIncomeWindowModel _model;
-        public AddIncomeWindow(AddIncomeWindowModel model)
+
+        public AddIncomeWindow()
         {
-            model.Parent = this;
-            _model = model;
-            DataContext = _model;
             InitializeComponent();
+            
+            _model = new AddIncomeWindowModel();
+            DataContext = _model;
+            GetTypesAsync();
+        }
+
+        public async void GetTypesAsync()
+        {
+            var types = await new IncomeTypeManager().ReadAll();
+            foreach (var type in types)
+            {
+                _model.IncomeTypeList.Add(type);
+            }
+            _model.SelectedType = _model.IncomeTypeList.FirstOrDefault();
+        }
+
+        public IncomeEntity GetBusinessEntity() => _model.GetBusinessEntity();
+
+        private void OkButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (!_model.ValidateModel())
+                return;
+
+            DialogResult = true;
+        }
+
+        private void CancelButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            DialogResult = false;
         }
     }
 
     public class AddIncomeWindowModel : NotifyPropertyChangedItem
     {
-        public AddIncomeWindow Parent;
-
-        public ObservableCollection<IncomeTypeEntity> IncomeTypeList { get; set; } =
-            new ObservableCollection<IncomeTypeEntity>();
+        public ObservableCollection<IncomeTypeEntity> IncomeTypeList { get; set; } = [];
 
         #region Private
         
@@ -64,48 +89,23 @@ namespace DbLab.WpfApp.Windows
 
         #endregion
 
-        #region Commands
-
-        public UiCommand OkButtonPressedCommand => new UiCommand(OkButtonPressed);
-        public UiCommand CancelButtonPressedCommand => new UiCommand(CancelButtonPressed);
-
-        private void OkButtonPressed(object? obj)
+        public bool ValidateModel()
         {
-            if (Validate())
-            {
-                Parent.DialogResult = true;
-                return;
-            }
-
-            MessageBox.Show("Говно, переделывай");
-        }
-
-        private void CancelButtonPressed(object? obj)
-        {
-            Parent.DialogResult = false;
-        }
-
-        #endregion
-
-        private bool Validate()
-        {
-            return _date.HasValue &&
-                   _sum.HasValue &&
+            return _date != null &&
+                   _sum != null &&
                    _selectedType != null;
         }
 
         public IncomeEntity GetBusinessEntity()
         {
-            if (!Validate()) return null;
-
             return new IncomeEntity
             {
                 Id = null,
-                Date = _date.Value,
-                Summ = _sum.Value,
+                Date = _date!.Value,
+                Summ = _sum!.Value,
                 Comment = _comment,
-                IdIncomeType = _selectedType.Id,
-                IncomeTypeName = _selectedType.TypeName
+                IdIncomeType = _selectedType!.Id,
+                IncomeTypeName = _selectedType!.TypeName
             };
         }
     }
