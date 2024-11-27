@@ -1,10 +1,11 @@
 namespace Tests
 {
+
     [TestClass]
-    public class UnitTest1
+    public class ManagerTest
     {
         [TestMethod]
-        public void TestMethod1()
+        public void IncomeManagerTest()
         {
         }
     }
