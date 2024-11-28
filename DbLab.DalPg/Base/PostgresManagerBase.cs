@@ -85,26 +85,6 @@ namespace DbLab.DalPg.Base
             return res;
         }
 
-        protected static async Task<List<T>> ExecuteListFunction<T>(string funcName,
-            Func<NpgsqlDataReader, Task<T>> mapper,
-            params (string Name, object? Value, NpgsqlDbType Type)[] parameters)
-        {
-            var query = $"select {funcName}{CreateParametersQuery(parameters)}";
-            var connection = await DbHelper.CreateOpenedConnectionAsync();
-            await using var cmd = new NpgsqlCommand(query, connection);
-            cmd.Parameters.AddRange(CreateParameters(parameters));
-            await using var reader = await cmd.ExecuteReaderAsync();
-
-            var result = new List<T>();
-
-            while (await reader.ReadAsync())
-            {
-                await mapper(reader);
-            }
-
-            return result;
-        }
-
         protected static async Task<List<T>> SelectView<T>()
         {
             var entityType = typeof(T);
@@ -139,7 +119,8 @@ namespace DbLab.DalPg.Base
                         throw new NullReferenceException(
                             $"Для поля {entityType.Name}.{p.Name} не задан сеттер");
 
-                    setMethod.Invoke(ent, [reader.GetValue(reader.GetOrdinal(colName))]);
+                    var value = reader.GetValue(reader.GetOrdinal(colName));
+                    setMethod.Invoke(ent, [value is DBNull ? null : value]);
                 }
                 res.Add(ent);
             }

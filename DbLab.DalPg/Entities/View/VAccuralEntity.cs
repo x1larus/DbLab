@@ -6,24 +6,24 @@ namespace DbLab.DalPg.Entities.View
     public class VAccrualEntity
     {
         [ViewColumn("id")]
-        public long Id { get; set; }
+        public long? Id { get; set; }
 
         [ViewColumn("type_name")]
-        public string TypeName { get; set; }
+        public string? TypeName { get; set; }
 
         [ViewColumn("category_name")]
-        public string CategoryName { get; set; }
+        public string? CategoryName { get; set; }
 
         [ViewColumn("amount")]
-        public decimal Amount { get; set; }
+        public decimal? Amount { get; set; }
 
         [ViewColumn("comment")]
-        public string Comment { get; set; }
+        public string? Comment { get; set; }
 
         [ViewColumn("accrual_date")]
-        public DateTime AccrualDate { get; set; }
+        public DateTime? AccrualDate { get; set; }
         
         [ViewColumn("is_income")]
-        public bool IsIncome { get; set; }
+        public bool? IsIncome { get; set; }
     }
 }

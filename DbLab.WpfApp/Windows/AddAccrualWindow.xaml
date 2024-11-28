@@ -1,0 +1,67 @@
+﻿<Window x:Class="DbLab.WpfApp.Windows.AddAccrualWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        xmlns:windows="clr-namespace:DbLab.WpfApp.Windows"
+        d:DataContext="{d:DesignInstance Type=windows:AddAccrualWindowModel}"
+        mc:Ignorable="d"
+        Title="AddAccrualWindow"
+        WindowStyle="None"
+        SizeToContent="WidthAndHeight"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Grid.Row="0" Grid.Column="0"
+                   Text="Тип"/>
+        <ComboBox Grid.Row="0" Grid.Column="1"
+                  ItemsSource="{Binding Path=AccrualTypesList, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                  SelectedItem="{Binding Path=SelectedType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+        </ComboBox>
+
+        <TextBlock Grid.Row="1" Grid.Column="0" 
+                   Text="Категория"/>
+        <ComboBox Grid.Row="1" Grid.Column="1"
+                  ItemsSource="{Binding Path=AccrualCategoriesList, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                  SelectedItem="{Binding Path=SelectedCategory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                  IsEnabled="{Binding Path=IsCategorySelectEnable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+        <TextBlock Grid.Row="2" Grid.Column="0"
+                   Text="Сумма"/>
+        <TextBox Grid.Row="2" Grid.Column="1"
+                 Text="{Binding Path=Amount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+        <TextBlock Grid.Row="3" Grid.Column="0"
+                   Text="Дата"/>
+        <DatePicker Grid.Row="3" Grid.Column="1"
+                    SelectedDate="{Binding Path=AccrualDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+        <TextBlock Grid.Row="4" Grid.Column="0"
+                   Text="Комментарий"/>
+        <TextBox Grid.Row="4" Grid.Column="1"
+                 Text="{Binding Path=Comment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+        <Button Grid.Row="5" Grid.Column="0"
+                Click="OkButton_OnClick">
+            <TextBlock Text="ok"/>
+        </Button>
+
+        <Button Grid.Row="5" Grid.Column="1"
+                Click="CancelButton_OnClick">
+            <TextBlock Text="cancel"/>
+        </Button>
+    </Grid>
+</Window>

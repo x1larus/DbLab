@@ -4,9 +4,11 @@
     {
         #region Functions
 
-        public static string FIncomeTypeReadAll = "public.f$income_type_read_all";
-        public static string FIncomeReadAll = "public.f$income_read_all";
-        public static string FIncomeWrite = "public.f$income_write";
+        public static string FAccrualTypeReadAll = "public.f$accrual_type_read_all";
+        public static string FAccrualTypeReadById = "public.f$accrual_type_read_by_id";
+        public static string FAccrualCategoryReadByType = "public.f$accrual_category_read_by_type";
+        public static string FAccrualCategoryReadAll = "public.f$accrual_category_read_all";
+        public static string FAccrualWrite = "public.f$accrual_write";
 
         #endregion
     }
