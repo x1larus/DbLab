@@ -1,3 +1,5 @@
+using DbLab.DalPg.Managers;
+
 namespace Tests
 {
 
@@ -5,8 +7,11 @@ namespace Tests
     public class ManagerTest
     {
         [TestMethod]
-        public void IncomeManagerTest()
+        public void ViewManagerTest()
         {
+            var mng = new ViewManager();
+            var a = mng.SelectVAccrual().Result;
+            Task.Delay(1000);
         }
     }
 }

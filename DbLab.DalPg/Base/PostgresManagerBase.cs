@@ -1,6 +1,7 @@
-﻿using System.Data;
-using Npgsql;
+﻿using Npgsql;
 using NpgsqlTypes;
+using System.Data;
+using System.Reflection;
 using System.Text;
 
 namespace DbLab.DalPg.Base
@@ -79,6 +80,49 @@ namespace DbLab.DalPg.Base
             while (reader.Read())
             {
                 res = reader.GetFieldValue<T>(0);
+            }
+
+            return res;
+        }
+
+        protected static async Task<List<T>> SelectView<T>()
+        {
+            var entityType = typeof(T);
+            var viewName = entityType.GetCustomAttribute<ViewNameAttribute>()?.ViewName;
+            if (viewName == null)
+                throw new NullReferenceException(
+                    $"Для сущности {entityType.Name} не задано название вью {nameof(ViewNameAttribute)}");
+
+
+            var props = entityType.GetProperties();
+
+            var query = $"select * from {viewName}";
+            var connection = await DbHelper.CreateOpenedConnectionAsync();
+            await using var cmd = new NpgsqlCommand(query, connection);
+            await using var reader = await cmd.ExecuteReaderAsync();
+
+            var res = new List<T>();
+
+            while (reader.Read())
+            {
+                var ent = Activator.CreateInstance<T>();
+                foreach (var p in props)
+                {
+                    var attr = p.GetCustomAttribute<ViewColumnAttribute>();
+                    if (attr == null)
+                        throw new NullReferenceException(
+                            $"Для поля {entityType.Name}.{p.Name} не задан атрибут {nameof(ViewColumnAttribute)}");
+                    
+                    var colName = attr.ColumnName;
+                    var setMethod = p.SetMethod;
+
+                    if (setMethod == null)
+                        throw new NullReferenceException(
+                            $"Для поля {entityType.Name}.{p.Name} не задан сеттер");
+
+                    setMethod.Invoke(ent, [reader.GetValue(reader.GetOrdinal(colName))]);
+                }
+                res.Add(ent);
             }
 
             return res;
