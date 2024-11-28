@@ -1,3 +1,4 @@
+using DbLab.DalPg.Entities.View;
 using DbLab.DalPg.Managers;
 
 namespace Tests
@@ -10,7 +11,7 @@ namespace Tests
         public void ViewManagerTest()
         {
             var mng = new ViewManager();
-            var a = mng.SelectVAccrual().Result;
+            var a = mng.ReadViewEntity<VAccrualEntity>().Result;
             Task.Delay(1000);
         }
     }

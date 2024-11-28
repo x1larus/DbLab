@@ -1,13 +1,12 @@
 ﻿using DbLab.DalPg.Base;
-using DbLab.DalPg.Entities.View;
 
 namespace DbLab.DalPg.Managers
 {
     public class ViewManager : PostgresManagerBase
     {
-        public async Task<List<VAccrualEntity>> SelectVAccrual()
+        public async Task<List<T>> ReadViewEntity<T>()
         {
-            return await SelectView<VAccrualEntity>();
+            return await SelectView<T>();
         }
     }
 }

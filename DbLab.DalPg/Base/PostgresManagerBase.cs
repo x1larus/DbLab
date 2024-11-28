@@ -77,12 +77,32 @@ namespace DbLab.DalPg.Base
 
             T res = default!;
 
-            while (reader.Read())
+            while (await reader.ReadAsync())
             {
                 res = reader.GetFieldValue<T>(0);
             }
 
             return res;
+        }
+
+        protected static async Task<List<T>> ExecuteListFunction<T>(string funcName,
+            Func<NpgsqlDataReader, Task<T>> mapper,
+            params (string Name, object? Value, NpgsqlDbType Type)[] parameters)
+        {
+            var query = $"select {funcName}{CreateParametersQuery(parameters)}";
+            var connection = await DbHelper.CreateOpenedConnectionAsync();
+            await using var cmd = new NpgsqlCommand(query, connection);
+            cmd.Parameters.AddRange(CreateParameters(parameters));
+            await using var reader = await cmd.ExecuteReaderAsync();
+
+            var result = new List<T>();
+
+            while (await reader.ReadAsync())
+            {
+                await mapper(reader);
+            }
+
+            return result;
         }
 
         protected static async Task<List<T>> SelectView<T>()
@@ -93,7 +113,6 @@ namespace DbLab.DalPg.Base
                 throw new NullReferenceException(
                     $"Для сущности {entityType.Name} не задано название вью {nameof(ViewNameAttribute)}");
 
-
             var props = entityType.GetProperties();
 
             var query = $"select * from {viewName}";
@@ -103,7 +122,7 @@ namespace DbLab.DalPg.Base
 
             var res = new List<T>();
 
-            while (reader.Read())
+            while (await reader.ReadAsync())
             {
                 var ent = Activator.CreateInstance<T>();
                 foreach (var p in props)
