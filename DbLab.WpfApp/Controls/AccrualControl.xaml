@@ -57,5 +57,13 @@
                                     Binding="{Binding Path=Comment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             </DataGrid.Columns>
         </DataGrid>
+        <StackPanel Grid.Row="1">
+            <Button>
+                <TextBlock Text="Add new..."/>
+            </Button>
+            <Button IsEnabled="{Binding Path=IsSaveBtnEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                <TextBlock Text="Save changes"/>
+            </Button>
+        </StackPanel>
     </Grid>
 </base:UserControlBase>

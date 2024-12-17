@@ -29,7 +29,7 @@ namespace DbLab.WpfApp.Controls
                 _model.ParticipantList.Add(ent);
 
             foreach (var ent in await new AccrualManager().ReadAll())
-                _model.AccrualModelList.Add(new AccrualModel(ent, _model.ParticipantList, _model.CategoryList));
+                _model.AccrualModelList.Add(new AccrualModel(ent, _model.ParticipantList, _model.CategoryList, _model));
         }
     }
 
@@ -38,6 +38,18 @@ namespace DbLab.WpfApp.Controls
         public ObservableCollection<AccrualModel> AccrualModelList { get; set; } = new ObservableCollection<AccrualModel>();
         public ObservableCollection<ParticipantEntity> ParticipantList { get; set; } = new ObservableCollection<ParticipantEntity>();
         public ObservableCollection<CategoryEntity> CategoryList { get; set; } = new ObservableCollection<CategoryEntity>();
+
+        private bool _isSaveBtnEnabled = false;
+
+        public bool IsSaveBtnEnabled
+        {
+            get => _isSaveBtnEnabled;
+            set
+            {
+                _isSaveBtnEnabled = value;
+                OnPropertyChanged();
+            }
+        }
     }
 
     public class AccrualModel : NotifyPropertyChangedItem
@@ -49,13 +61,16 @@ namespace DbLab.WpfApp.Controls
         public ObservableCollection<ParticipantEntity> ParticipantList { get; set; }
         public ObservableCollection<CategoryEntity> CategoryList { get; set; }
 
-        public AccrualModel(AccrualEntity accrualEntity, ObservableCollection<ParticipantEntity> participantList, ObservableCollection<CategoryEntity> categoryList)
+        private AccrualControlModel _viewModel;
+
+        public AccrualModel(AccrualEntity accrualEntity, ObservableCollection<ParticipantEntity> participantList, ObservableCollection<CategoryEntity> categoryList, AccrualControlModel viewModel)
         {
             _accrualEntity = accrualEntity;
             ParticipantList = participantList;
             CategoryList = categoryList;
             _selectedParticipant = ParticipantList.FirstOrDefault(el => el.Id == _accrualEntity.ParticipantId);
             _selectedCategory = CategoryList.FirstOrDefault(el => el.Id == _accrualEntity.CategoryId);
+            _viewModel = viewModel;
         }
 
         private ParticipantEntity? _selectedParticipant;
@@ -67,7 +82,7 @@ namespace DbLab.WpfApp.Controls
             set
             {
                 _accrualEntity.Date = value;
-                NeedPersist = true;
+                AddToPersist();
                 OnPropertyChanged();
             }
         }
@@ -79,7 +94,7 @@ namespace DbLab.WpfApp.Controls
             {
                 _selectedParticipant = value;
                 _accrualEntity.ParticipantId = _selectedParticipant?.Id;
-                NeedPersist = true;
+                AddToPersist();
                 OnPropertyChanged();
             }
         }
@@ -91,7 +106,7 @@ namespace DbLab.WpfApp.Controls
             {
                 _selectedCategory = value;
                 _accrualEntity.CategoryId = _selectedCategory?.Id;
-                NeedPersist = true;
+                AddToPersist();
                 OnPropertyChanged();
             }
         }
@@ -102,7 +117,7 @@ namespace DbLab.WpfApp.Controls
             set
             {
                 _accrualEntity.Amount = value;
-                NeedPersist = true;
+                AddToPersist();
                 OnPropertyChanged();
             }
         }
@@ -113,9 +128,15 @@ namespace DbLab.WpfApp.Controls
             set
             {
                 _accrualEntity.Comment = value;
-                NeedPersist = true;
+                AddToPersist();
                 OnPropertyChanged();
             }
+        }
+
+        public void AddToPersist()
+        {
+            NeedPersist = true;
+            _viewModel.IsSaveBtnEnabled = true;
         }
     }
 }
