@@ -12,4 +12,8 @@
     <ProjectReference Include="..\DbLab.DalPg\DbLab.DalPg.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Windows\" />
+  </ItemGroup>
+
 </Project>

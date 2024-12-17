@@ -12,23 +12,50 @@
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
+        <FrameworkElement x:Name="ProxyElement" Visibility="Collapsed" DataContext="{Binding}"/>
         <DataGrid Grid.Row="0" 
-                  ItemsSource="{Binding Path=AccrualList, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                  ItemsSource="{Binding Path=AccrualModelList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                   AutoGenerateColumns="False"
-                  IsReadOnly="True">
+                  IsReadOnly="False">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Дата" Binding="{Binding Path=AccrualDate, StringFormat=dd/MM/yyy}"/>
-                <DataGridTextColumn Header="Сумма" Binding="{Binding Path=Amount}"/>
-                <DataGridTextColumn Header="Тип" Binding="{Binding Path=TypeName}"/>
-                <DataGridTextColumn Header="Категория" Binding="{Binding Path=CategoryName}"/>
-                <DataGridTextColumn Header="Комментарий" Binding="{Binding Path=Comment}"/>
+                <DataGridTextColumn Header="Дата" 
+                                    Binding="{Binding Path=Date, StringFormat=dd/MM/yyy}"/>
+                <DataGridTemplateColumn Header="Кто">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ComboBox ItemsSource="{Binding Path=ParticipantList, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                      SelectedItem="{Binding Path=SelectedParticipant, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Name}"/>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridCheckBoxColumn Header="Доход?" 
+                                        Binding="{Binding Path=SelectedCategory.IsIncome, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <DataGridTemplateColumn Header="Категория">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ComboBox ItemsSource="{Binding Path=CategoryList, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                      SelectedItem="{Binding Path=SelectedCategory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Name}"/>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="Сумма" 
+                                    Binding="{Binding Path=Amount}"/>
+                <DataGridTextColumn Header="Комментарий" 
+                                    Binding="{Binding Path=Comment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             </DataGrid.Columns>
         </DataGrid>
-
-        <Button Grid.Row="1"
-                DockPanel.Dock="Bottom"
-                Command="{Binding AddChargeCommand}">
-            <TextBlock Text="Add new..."/>
-        </Button>
     </Grid>
 </base:UserControlBase>
