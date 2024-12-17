@@ -2,6 +2,7 @@
 using DbLab.DalPg.Managers;
 using DbLab.WpfApp.Base;
 using System.Collections.ObjectModel;
+using System.Transactions;
 using System.Windows;
 
 namespace DbLab.WpfApp.Controls
@@ -52,29 +53,37 @@ namespace DbLab.WpfApp.Controls
             }
         }
 
-        public UiCommand SaveCommand => new UiCommand((obj) =>
+        public UiCommand SaveCommand => new UiCommand(async (obj) =>
         {
             var persistQueue = AccrualModelList.Where(el => el.NeedPersist).ToList();
             try
             {
+                using var ts = new TransactionScope(TransactionScopeOption.Required);
                 var mng = new AccrualManager();
                 foreach (var ent in persistQueue)
                 {
-                    mng.Write(ent._accrualEntity);
+                    await mng.Write(ent._accrualEntity);
                 }
+                ts.Complete();
             }
             catch (Exception e)
             {
                 MessageBox.Show(Application.Current.MainWindow, $"Возникла ошибка при сохранении {e.Message}");
+                return;
             }
-            finally
+
+            IsSaveBtnEnabled = false;
+            foreach (var model in persistQueue)
             {
-                IsSaveBtnEnabled = false;
-                foreach (var model in persistQueue)
-                {
-                    model.NeedPersist = false;
-                }
+                model.NeedPersist = false;
             }
+        });
+
+        public UiCommand AddNewCommand => new UiCommand((obj) =>
+        {
+            AccrualModelList.Add(new AccrualModel(new AccrualEntity(), ParticipantList, CategoryList, this)
+                { NeedPersist = true });
+            IsSaveBtnEnabled = true;
         });
     }
 

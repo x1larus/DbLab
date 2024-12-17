@@ -18,8 +18,13 @@
                   AutoGenerateColumns="False"
                   IsReadOnly="False">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Дата" 
-                                    Binding="{Binding Path=Date, StringFormat=dd/MM/yyy}"/>
+                <DataGridTemplateColumn Header="Дата" >
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <DatePicker SelectedDate="{Binding Path=Date, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="Кто">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -58,7 +63,7 @@
             </DataGrid.Columns>
         </DataGrid>
         <StackPanel Grid.Row="1">
-            <Button>
+            <Button Command="{Binding AddNewCommand}">
                 <TextBlock Text="Add new..."/>
             </Button>
             <Button IsEnabled="{Binding Path=IsSaveBtnEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
