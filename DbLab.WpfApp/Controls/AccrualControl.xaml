@@ -12,9 +12,8 @@
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <FrameworkElement x:Name="ProxyElement" Visibility="Collapsed" DataContext="{Binding}"/>
         <DataGrid Grid.Row="0" 
-                  ItemsSource="{Binding Path=AccrualModelList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                  ItemsSource="{Binding Path=AccrualModelList, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                   AutoGenerateColumns="False"
                   IsReadOnly="False">
             <DataGrid.Columns>

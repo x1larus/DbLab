@@ -1,5 +1,6 @@
 ﻿using DbLab.DalPg.Base;
 using DbLab.DalPg.Entities;
+using NpgsqlTypes;
 
 namespace DbLab.DalPg.Managers
 {
@@ -17,6 +18,13 @@ namespace DbLab.DalPg.Managers
                     Income = await reader.GetFieldValueAsync<decimal?>("income"),
                     Balance = await reader.GetFieldValueAsync<decimal?>("balance")
                 });
+        }
+
+        public async Task<long?> Write(ParticipantEntity ent)
+        {
+            return await ExecuteFunction<long?>("public.f$participants_write", ("vp_id", ent.Id, NpgsqlDbType.Bigint),
+                ("vp_name", ent.Name, NpgsqlDbType.Varchar),
+                ("vp_phone_number", ent.PhoneNumber, NpgsqlDbType.Varchar));
         }
     }
 }

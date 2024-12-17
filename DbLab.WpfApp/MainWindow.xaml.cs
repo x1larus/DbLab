@@ -24,7 +24,8 @@ namespace DbLab.WpfApp
 
         public void RegisterTabs()
         {
-            _model.Tabs.Add(new TabModel("Доходы", typeof(AccrualControl)));
+            _model.Tabs.Add(new TabModel("Начисления", typeof(AccrualControl)));
+            _model.Tabs.Add(new TabModel("Люди", typeof(ParticipantsControl)));
         }
 
         private void Tab_SelectionChanged(object sender, RoutedEventArgs e)
