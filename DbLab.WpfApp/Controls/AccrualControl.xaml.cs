@@ -2,6 +2,7 @@
 using DbLab.DalPg.Managers;
 using DbLab.WpfApp.Base;
 using System.Collections.ObjectModel;
+using System.Windows;
 
 namespace DbLab.WpfApp.Controls
 {
@@ -50,13 +51,38 @@ namespace DbLab.WpfApp.Controls
                 OnPropertyChanged();
             }
         }
+
+        public UiCommand SaveCommand => new UiCommand((obj) =>
+        {
+            var persistQueue = AccrualModelList.Where(el => el.NeedPersist).ToList();
+            try
+            {
+                var mng = new AccrualManager();
+                foreach (var ent in persistQueue)
+                {
+                    mng.Write(ent._accrualEntity);
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(Application.Current.MainWindow, $"Возникла ошибка при сохранении {e.Message}");
+            }
+            finally
+            {
+                IsSaveBtnEnabled = false;
+                foreach (var model in persistQueue)
+                {
+                    model.NeedPersist = false;
+                }
+            }
+        });
     }
 
     public class AccrualModel : NotifyPropertyChangedItem
     {
-        private readonly AccrualEntity _accrualEntity;
+        public readonly AccrualEntity _accrualEntity;
 
-        public bool NeedPersist { get; private set; } = false;
+        public bool NeedPersist { get; set; } = false;
 
         public ObservableCollection<ParticipantEntity> ParticipantList { get; set; }
         public ObservableCollection<CategoryEntity> CategoryList { get; set; }

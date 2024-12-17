@@ -61,7 +61,8 @@
             <Button>
                 <TextBlock Text="Add new..."/>
             </Button>
-            <Button IsEnabled="{Binding Path=IsSaveBtnEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+            <Button IsEnabled="{Binding Path=IsSaveBtnEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                    Command="{Binding SaveCommand}">
                 <TextBlock Text="Save changes"/>
             </Button>
         </StackPanel>
