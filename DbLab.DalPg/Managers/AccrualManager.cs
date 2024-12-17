@@ -41,5 +41,12 @@ namespace DbLab.DalPg.Managers
 
             return res;
         }
+
+        public async Task<long?> Delete(long? id)
+        {
+            long? res = 0;
+            res = await ExecuteFunction<long?>("public.f$accruals_delete", ("vp_id", id, NpgsqlDbType.Bigint));
+            return res;
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using DbLab.DalPg.Base;
 using DbLab.DalPg.Entities;
+using NpgsqlTypes;
 
 namespace DbLab.DalPg.Managers
 {
@@ -13,6 +14,12 @@ namespace DbLab.DalPg.Managers
                 IsIncome = await reader.GetFieldValueAsync<bool?>("is_income"),
                 Name = await reader.GetFieldValueAsync<string?>("name")
             });
+        }
+
+        public async Task<long?> Write(CategoryEntity ent)
+        {
+            return await ExecuteFunction<long?>("public.f$categories_write", ("vp_id", ent.Id, NpgsqlDbType.Bigint),
+                ("vp_is_income", ent.IsIncome, NpgsqlDbType.Boolean), ("vp_name", ent.Name, NpgsqlDbType.Varchar));
         }
     } 
 }

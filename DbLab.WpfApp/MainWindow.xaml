@@ -14,23 +14,30 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         
-        <ScrollViewer Grid.Column="0"
-                      HorizontalScrollBarVisibility="Hidden"
-                      VerticalScrollBarVisibility="Hidden">
+        <StackPanel Grid.Column="0">
 
-            <ListBox 
-                ItemsSource="{Binding Path=Tabs, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                SelectedItem="{Binding Path=SelectedTab, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                SelectionMode="Single"
-                SelectionChanged="Tab_SelectionChanged">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding Path=TabName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-        </ScrollViewer>
+       
+            <ScrollViewer Grid.Column="0"
+                          HorizontalScrollBarVisibility="Hidden"
+                          VerticalScrollBarVisibility="Hidden"
+                          DockPanel.Dock="Top">
+                <ListBox 
+                    ItemsSource="{Binding Path=Tabs, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                    SelectedItem="{Binding Path=SelectedTab, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    SelectionMode="Single"
+                    SelectionChanged="Tab_SelectionChanged">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Path=TabName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </ScrollViewer>
 
+            <Button Margin="0, 50" Height="50" DockPanel.Dock="Bottom" Foreground="White" Background="Red" Click="ButtonBase_OnClick">
+                <TextBlock Text="clear db"/>
+            </Button>
+        </StackPanel>
         <ContentControl Grid.Column="1" Content="{Binding Path=CurrentControl}"/>
 
     </Grid>

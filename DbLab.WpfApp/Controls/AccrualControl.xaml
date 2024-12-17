@@ -17,6 +17,7 @@
                   AutoGenerateColumns="False"
                   IsReadOnly="False">
             <DataGrid.Columns>
+                <DataGridCheckBoxColumn Header="Выбрать" Binding="{Binding Path=IsMarkedForDelete, Mode=TwoWay}"/>
                 <DataGridTemplateColumn Header="Дата" >
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>

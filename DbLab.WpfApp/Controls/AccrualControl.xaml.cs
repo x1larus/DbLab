@@ -58,13 +58,17 @@ namespace DbLab.WpfApp.Controls
             var persistQueue = AccrualModelList.Where(el => el.NeedPersist).ToList();
             try
             {
-                using var ts = new TransactionScope(TransactionScopeOption.Required);
                 var mng = new AccrualManager();
                 foreach (var ent in persistQueue)
                 {
+                    if (ent.IsMarkedForDelete)
+                    {
+                        await mng.Delete(ent._accrualEntity.Id);
+                        AccrualModelList.Remove(ent);
+                    }
+
                     await mng.Write(ent._accrualEntity);
                 }
-                ts.Complete();
             }
             catch (Exception e)
             {
@@ -92,6 +96,19 @@ namespace DbLab.WpfApp.Controls
         public readonly AccrualEntity _accrualEntity;
 
         public bool NeedPersist { get; set; } = false;
+
+        private bool _isMarkedForDelete = false;
+
+        public bool IsMarkedForDelete
+        {
+            get => _isMarkedForDelete;
+            set
+            {
+                _isMarkedForDelete = value;
+                AddToPersist();
+                OnPropertyChanged();
+            }
+        }
 
         public ObservableCollection<ParticipantEntity> ParticipantList { get; set; }
         public ObservableCollection<CategoryEntity> CategoryList { get; set; }

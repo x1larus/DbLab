@@ -2,6 +2,8 @@
 using DbLab.WpfApp.Controls;
 using System.Collections.ObjectModel;
 using System.Windows;
+using DbLab.DalPg.Base;
+using Npgsql;
 
 namespace DbLab.WpfApp
 {
@@ -26,6 +28,7 @@ namespace DbLab.WpfApp
         {
             _model.Tabs.Add(new TabModel("Начисления", typeof(AccrualControl)));
             _model.Tabs.Add(new TabModel("Люди", typeof(ParticipantsControl)));
+            _model.Tabs.Add(new TabModel("Категории", typeof(CategoryControl)));
         }
 
         private void Tab_SelectionChanged(object sender, RoutedEventArgs e)
@@ -33,6 +36,18 @@ namespace DbLab.WpfApp
             if (_model.SelectedTab == null) return;
 
             _model.CurrentControl = Activator.CreateInstance(_model.SelectedTab.Control) as UserControlBase;
+        }
+
+        private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+        {
+            ClearDb();
+        }
+
+        private async void ClearDb()
+        {
+            await using var conn = await DbHelper.CreateOpenedConnectionAsync();
+            using var comd = new NpgsqlCommand("call public.p$clear_all()", conn);
+            comd.ExecuteNonQuery();
         }
     }
 
